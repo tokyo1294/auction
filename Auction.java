@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-
+import java.util.Iterator;
 /**
  * A simple model of an auction.
  * The auction maintains a list of lots of arbitrary length.
@@ -42,7 +42,7 @@ public class Auction
             System.out.println(aLot.toString());
         }
     }
-    
+
     /**
      * Make a bid for a lot.
      * A message is printed indicating whether the bid is successful or not.
@@ -55,18 +55,20 @@ public class Auction
     {
         Lot selectedLot = getLot(lotNumber);
         if(selectedLot != null) {
-            Bid aBid = new Bid(bidder, value);
-            boolean successful = selectedLot.bidFor(aBid);
+            //Bid aBid = new Bid(bidder, value);
+            //boolean successful = selectedLot.bidFor(aBid);
+            //question 2
+            boolean successful = selectedLot.bidFor(new Bid(bidder,value));
             if(successful) {
                 System.out.println("The bid for lot number " +
-                                   lotNumber + " was successful.");
+                    lotNumber + " was successful.");
             }
             else {
                 // Report which bid is higher.
                 Bid highestBid = selectedLot.getHighestBid();
                 System.out.println("Lot number: " + lotNumber +
-                                   " already has a bid of: " +
-                                   highestBid.getValue());
+                    " already has a bid of: " +
+                    highestBid.getValue());
             }
         }
     }
@@ -78,27 +80,62 @@ public class Auction
      * @return The lot with the given number, or null.
      */
     public Lot getLot(int lotNumber)
-    {
-        if((lotNumber >= 1) && (lotNumber < nextLotNumber)) {
-            // The number seems to be reasonable.
-            Lot selectedLot = listOfLots.get(lotNumber - 1);
-            // Include a confidence check to be sure we have the
-            // right lot.
-            if(selectedLot.getNumber() != lotNumber) {
-                System.out.println("Internal error: Lot number " +
-                                   selectedLot.getNumber() +
-                                   " was returned instead of " +
-                                   lotNumber);
-                // Don't return an invalid lot.
-                selectedLot = null;
+    { //question 5 ,og7
+        // the impact on the code if you remove a lot you risk getting internal errors 
+        //question 6 ,og 8
+        for (Lot aLot : listOfLots){
+            if(aLot.getNumber()==lotNumber){
+                return aLot;
+
             }
-            return selectedLot;
         }
-        else {
-            System.out.println("Lot number: " + lotNumber +
-                               " does not exist.");
-            return null;
+        System.out.println("Lot number: " + lotNumber +
+            " does not exist.");
+        return null;
+    }
+
+    //queston 3
+    public void close(){
+        for(Lot alot : listOfLots){
+            Bid Highest = alot.getHighestBid();
+            if (Highest == null){
+                System.out.println("no bid for lot number"+ alot.getNumber());
+
+            }
+            else{
+                System.out.println("Highest bid for lot number"+ alot.getNumber() + "was"+ Highest.getValue());
+                System.out.println("bidder was"+ Highest.getBidder().getName());
+            }
         }
     }
+    //question 4 og 6
+    public ArrayList<Lot> getUnsold(){
+        ArrayList<Lot>unsold = new ArrayList<>();
+        for(Lot alot : listOfLots){
+            Bid Highest = alot.getHighestBid();
+            if (Highest == null){
+                unsold.add(alot);
+
+            }
+
+        }
+        return getUnsold();
+    }
+    public Lot removeLot(int number){
+     Iterator<Lot>it = listOfLots.iterator();
+     while(it.hasNext()) {
+         Lot alot = it.next();
+         if (alot.getNumber()==number) 
+         {
+             
+             return alot;
+             
+         }
+         
+     }
+     return null;
+    }  
+    
+//question 8 ,og 10
 }
 
